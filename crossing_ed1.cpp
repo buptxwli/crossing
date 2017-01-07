@@ -3,7 +3,10 @@
 #include <vector>
 using namespace std;
 int num,row;
-bool mark[26];
+const int maxnum=26;
+const int maxrow=26;
+const int maxtime=maxnum*(2+maxrow);
+bool mark[maxrow];
 int min_time;
 struct P
 {
@@ -17,31 +20,28 @@ struct P
 	    return (x!=A.x || y!=A.y);
 	}
 };
-P startpoint[26];
-P endpoint[26];
-P now[26][50];
+P startpoint[maxnum];
+P endpoint[maxnum];
+P now[maxnum][maxtime];
 void debug_plot(int t) {
     char buffer[100][3];
-    for (int i=0;i<row;i++) {
-        buffer[i][0] = '>';
-        buffer[i][1] = 'X';
-        buffer[i][2] = '>';
-    }
     for(int m=0;m<t+1;m++)
     {
-        for (int i=0;i<row;i++) {
-        buffer[i][0] = '>';
-        buffer[i][1] = 'X';
-        buffer[i][2] = '>';
+        for (int i=0;i<row;i++)
+		{
+			buffer[i][0] = '>';
+			buffer[i][1] = 'X';
+			buffer[i][2] = '>';
         }
-        for (int i=0;i<num;i++) {
+        for (int i=0;i<num;i++)
+		{
             buffer[now[i][m].x][now[i][m].y] = i+'0';
         }
-        for (int i=0;i<row;i++) {
-            for (int j=0;j<3;j++) {
+        for (int i=0;i<row;i++)
+		{
+            for (int j=0;j<3;j++)
                 printf("%c", buffer[i][j]);
-            }
-        printf("\n");
+			printf("\n");
         }
         printf("\n");
     }
@@ -66,28 +66,26 @@ void dfs(int carnum,int time)
         if(flag1)
             return;
     }
-	bool flag=true;
+	bool flag2=true;
 	if(carnum==num)
 	{
 		for(int j=0;j<num;j++)
 		{
 			if(now[j][time]!=endpoint[j])
             {
-                flag=false;
+                flag2=false;
                 break;
             }
 		}
-		if(flag && time<min_time)
+		if(flag2 && time<min_time)
 		{
 		    min_time = time;
 			printf("time:%d\n",time);
 			debug_plot(time);
-            return;
 		}
 		else
 			dfs(0,time+1);
         return;
-
 	}
 	int i=carnum;
     if(now[i][time].y==0 && mark[now[i][time].x]==false &&now[i][time]!=endpoint[i])
@@ -149,7 +147,6 @@ int main()
 {
     freopen("input.txt","r",stdin);
     //freopen("output.txt","w",stdout);
-
     memset(mark,false,sizeof(mark));
 	while (scanf("%d %d",&row,&num)!=EOF)
 	{
