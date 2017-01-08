@@ -23,7 +23,22 @@ struct P
 P startpoint[maxnum];
 P endpoint[maxnum];
 P now[maxnum][maxtime];
-void debug_plot(int t) {
+P shortest_path[maxnum][maxtime];
+void debug_path(int t)
+{
+	for(int i=0;i<num;i++)
+	{
+	    printf("car[%d]:",i);
+		for(int m=0;m<t;m++)
+		{
+			printf("(%d,%d)->",shortest_path[i][m].x,shortest_path[i][m].y);
+		}
+		printf("(%d,%d)\n",shortest_path[i][t].x,shortest_path[i][t].y);
+	}
+	return;
+}
+void debug_plot(int t)
+{
     char buffer[100][3];
     for(int m=0;m<t+1;m++)
     {
@@ -35,7 +50,7 @@ void debug_plot(int t) {
         }
         for (int i=0;i<num;i++)
 		{
-            buffer[now[i][m].x][now[i][m].y] = i+'0';
+            buffer[shortest_path[i][m].x][shortest_path[i][m].y] = i+'0';
         }
         for (int i=0;i<row;i++)
 		{
@@ -48,40 +63,60 @@ void debug_plot(int t) {
     printf("\n");
     return;
 }
+bool judge_deadlock(int t)
+{
+    for(int k=0;k<num;k++)
+    {
+        if(now[k][t-1]!=now[k][t])
+            return false;
+    }
+    return true;
+}
+bool judge_end(int t)
+{
+	for(int j=0;j<num;j++)
+	{
+		if(now[j][t]!=endpoint[j])
+            return false;
+	}
+	return true;
+}
+bool judge_exchange(int t)
+{
+	for(int p=0;p<num-1;p++)
+	{
+		for(int q=p+1;q<num;q++)
+		{
+			if(now[p][t+1]==now[q][t] && now[p][t]==now[q][t+1])
+				return true;
+		}
+	}
+	return false;
+}
 void dfs(int carnum,int time)
 {
-    bool flag1=true;
 	if (time>min_time)
         return;
-    if(time>=2)
-    {
-        for(int k=0;k<num;k++)
-        {
-            if(now[k][time-1]!=now[k][time])
-            {
-                flag1=false;
-                break;
-            }
-        }
+	if(time>2)
+	{
+		bool flag1=judge_deadlock(time);
         if(flag1)
             return;
-    }
-	bool flag2=true;
+	}
+	bool flag2=judge_exchange(time);
+	if(flag2)
+		return;
 	if(carnum==num)
 	{
-		for(int j=0;j<num;j++)
-		{
-			if(now[j][time]!=endpoint[j])
-            {
-                flag2=false;
-                break;
-            }
-		}
-		if(flag2 && time<min_time)
+		bool flag3=judge_end(time);
+		if(flag3 && time<min_time)
 		{
 		    min_time = time;
-			printf("time:%d\n",time);
-			debug_plot(time);
+			for(int j=0;j<num;j++)
+            {
+                for(int k=0;k<time;k++)
+                    shortest_path[j][k]=now[j][k];
+            }
 		}
 		else
 			dfs(0,time+1);
@@ -157,6 +192,9 @@ int main()
         }
         min_time =num*(2+row);
 		dfs(0,0);
+		printf("time:%d\n",min_time);
+		debug_plot(min_time);
+		debug_path(min_time);
 	}
 	return 0;
 }
