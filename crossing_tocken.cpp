@@ -9,6 +9,7 @@ const int maxrow=100;
 const int maxtime=maxnum*(2+maxrow);
 bool mark[maxrow];
 bool mark_go[maxnum];
+bool mark_release[maxnum];
 int time;
 int waiting_time[maxnum];
 int at_zone[maxnum];
@@ -48,7 +49,7 @@ void debug_path(int t)
 void debug_plot(int t)
 {
     char buffer[100][3];
-    for(int m=0;m<t+1;m++)
+    for(int m=0;m<t;m++)
     {
         for (int i=0;i<row;i++)
 		{
@@ -200,10 +201,13 @@ void end_release(int t)
 {
     for(int i=0;i<num;i++)
     {
-        if(now[i][t]==endpoint[i])
+        if(mark_release[i]==true)
+            continue;
+        if(now[i][t]==endpoint[i] && startpoint[i]!=endpoint[i])
         {
             for(int j=1;j<step_total[i]-1;j++)
-                mark[shortest_path[i][j].x]=false;  //I have replaced it already
+                mark[shortest_path[i][j].x]=false;
+            mark_release[i]=true;
         }
     }
     return;
@@ -268,6 +272,7 @@ int main()
     freopen("input.txt","r",stdin);
     memset(mark,false,sizeof(mark));
     memset(mark_go,false,sizeof(mark_go));
+    memset(mark_release,false,sizeof(mark_release));
     memset(step_now,0,sizeof(step_now));
     memset(step_total,0,sizeof(step_total));
 	while (scanf("%d %d",&row,&num)!=EOF)
