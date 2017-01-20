@@ -49,7 +49,7 @@ void debug_path(int t)
 void debug_plot(int t)
 {
     char buffer[100][3];
-    for(int m=0;m<t;m++)
+    for(int m=0;m<t+1;m++)
     {
         for (int i=0;i<row;i++)
 		{
