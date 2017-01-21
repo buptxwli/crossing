@@ -469,6 +469,19 @@ void go_release(int t)
     }
     return;
 }
+void judge_go(int t)  //new
+{
+    memset(mark_go,false,sizeof(mark_go));
+    for(int i=0;i<num;i++)
+    {
+        if((in[now[i][t].x][now[i][t].y]=='>' || in[now[i][t].x][now[i][t].y]=='<')&&in[shortest_path[i][step_now[i]+1].x][shortest_path[i][step_now[i]+1].y]=='X')
+            continue;
+        if(in[now[i][t].x][now[i][t].y]=='X')
+            mark_go[i]=true;
+        else if((in[now[i][t].x][now[i][t].y]=='>' || in[now[i][t].x][now[i][t].y]=='<')&&mark_point[shortest_path[i][step_now[i]+1].x][shortest_path[i][step_now[i]+1].y]==false)
+            mark_go[i]=true;
+    }
+}
 void crossing_token(int t)
 {
     if(t!=0)
@@ -476,6 +489,7 @@ void crossing_token(int t)
         end_release(t);
         go_release(t);
     }
+    judge_go(t);  //new
     bool flag_end=judge_end(t);
     if(flag_end==false)
     {
@@ -517,6 +531,7 @@ void crossing_token(int t)
                 {
                     now[i][t+1]=shortest_path[i][step_now[i]+1];
                     step_now[i]++;
+                    mark_point[now[i][t+1].x][now[i][t+1].y]=true;
                 }
             }
             else
