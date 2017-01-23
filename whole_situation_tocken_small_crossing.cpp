@@ -517,9 +517,9 @@ void judge_go(int t)  //new
     memset(mark_go,false,sizeof(mark_go));
     for(int i=0;i<num;i++)
     {
-        if((in[now[i][t].x][now[i][t].y]=='>' || in[now[i][t].x][now[i][t].y]=='<')&&in[shortest_path[i][step_now[i]+1].x][shortest_path[i][step_now[i]+1].y]=='X')
+        if((in[now[i][t].x][now[i][t].y]=='>' || in[now[i][t].x][now[i][t].y]=='<')&&(in[shortest_path[i][step_now[i]+1].x][shortest_path[i][step_now[i]+1].y]=='X' ||in[shortest_path[i][step_now[i]+1].x][shortest_path[i][step_now[i]+1].y]=='Y'))
             continue;
-        if(in[now[i][t].x][now[i][t].y]=='X')
+        if(in[now[i][t].x][now[i][t].y]=='X' || in[now[i][t].x][now[i][t].y]=='Y')
             mark_go[i]=true;
         else if((in[now[i][t].x][now[i][t].y]=='>' || in[now[i][t].x][now[i][t].y]=='<')&&mark_point[shortest_path[i][step_now[i]+1].x][shortest_path[i][step_now[i]+1].y]==false)
             mark_go[i]=true;
