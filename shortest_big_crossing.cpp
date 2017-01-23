@@ -130,6 +130,27 @@ void debug_plot(int t)
     printf("\n");
     return;
 }
+void debug_dfs(int t)
+{
+    char buffer[100][100];
+        for (int i=0;i<row;i++)
+		{
+			for(int j=0;j<line;j++)
+                buffer[i][j]=in[i][j];
+        }
+        for (int i=0;i<num;i++)
+		{
+            buffer[now[i][t].x][now[i][t].y] = i+'0';
+        }
+        for (int i=0;i<row;i++)
+		{
+            for (int j=0;j<line;j++)
+                printf("%c", buffer[i][j]);
+			printf("\n");
+        }
+    printf("\n");
+    return;
+}
 bool judge_deadlock(int t)
 {
     for(int k=0;k<num;k++)
@@ -181,6 +202,7 @@ void dfs(int carnum,int time)
         return;
     if(carnum==num)
     {
+        //debug_dfs(time);
         bool flag1=judge_deadlock(time);
         if(flag1)
             return;
@@ -323,7 +345,7 @@ void dfs(int carnum,int time)
             }
             if(now[i][time].y+1<line)
             {
-                if(startpoint[i].y<endpoint[i].y && in[now[i][time].x][now[i][time].y+1]=='>' &&mark_point[now[i][time].x][now[i][time].y+1]==false) //right
+                if( in[now[i][time].x][now[i][time].y+1]=='>' &&mark_point[now[i][time].x][now[i][time].y+1]==false) //right
                 {
                     mark_point[now[i][time].x][now[i][time].y]=false;
                     now[i][time+1].x=now[i][time].x;
@@ -337,7 +359,7 @@ void dfs(int carnum,int time)
             }
             if(now[i][time].y-1>=0)
             {
-                if(startpoint[i].y>endpoint[i].y && in[now[i][time].x][now[i][time].y-1]=='<' &&mark_point[now[i][time].x][now[i][time].y-1]==false) //left
+                if( in[now[i][time].x][now[i][time].y-1]=='<' &&mark_point[now[i][time].x][now[i][time].y-1]==false) //left
                 {
                     mark_point[now[i][time].x][now[i][time].y]=false;
                     now[i][time+1].x=now[i][time].x;
