@@ -7,7 +7,7 @@
 using namespace std;
 const int maxnum=100;
 const int maxrow=100;
-const int maxline=50;
+const int maxline=100;
 const int maxcross=100;
 const int maxtime=maxnum*maxrow*maxline;
 bool graph_mark[1000];
@@ -29,6 +29,7 @@ int change_total[maxnum];
 char in[100][100];   //graph
 int graph_pre[1000];
 int graph_dis[1000];
+int graph_turn[1000];
 int graph_size;
 struct P
 {
@@ -57,10 +58,14 @@ vector <E> edge[1000];  //graph
 struct node  //graph only
 {
 	int name,tmpdis;
-	node(int _name=0,int _tmpdis=0):name(_name),tmpdis(_tmpdis){}
+	int turn;
+	node(int _name=0,int _tmpdis=0,int _turn=0):name(_name),tmpdis(_tmpdis),turn(_turn){}
 	bool operator <(const node &r)const
 	{
-		return tmpdis>r.tmpdis;
+        if(tmpdis!=r.tmpdis)
+            return tmpdis>r.tmpdis;
+        else
+            return turn>r.turn;
 	}
 };
 struct C
@@ -175,19 +180,37 @@ void find_shortest(int i)
     {
         tmp=que.top();
         que.pop();
+        //printf("pop:(%d,%d),d=%d,t=%d\n", tmp.name/line, tmp.name%line, tmp.tmpdis, tmp.turn);
         int u=tmp.name;
         if(graph_mark[u]) continue;
         graph_mark[u]=true;
+        int now_x = u/line;
+        int now_y = u%line;
+        int now_turn = tmp.turn;
+        int last_x = graph_pre[u]/line;
+        int last_y = graph_pre[u]%line;
         for(int j=0;j<edge[u].size();j++)
         {
-            int m=edge[u][j].nextx;
-            int n=edge[u][j].nexty;
-            int c=edge[u][j].cost;
-            if(!graph_mark[m*line+n]&&graph_dis[m*line+n]>graph_dis[u]+c)
+            int next_x=edge[u][j].nextx;
+            int next_y=edge[u][j].nexty;
+            int next_name = next_x*line+next_y;
+        	int next_turn = now_turn;
+        	if (now_x!=startpoint[i].x || now_y!=startpoint[i].y)
+	        	if (now_x-last_x!=next_x-now_x || now_y-last_y!=next_y-now_y)
+	        		next_turn++;
+			int c=edge[u][j].cost;
+
+            if((!graph_mark[next_name]&&graph_dis[next_name]>graph_dis[u]+c) ||
+			(graph_dis[next_name]==graph_dis[u]+c && graph_turn[next_name]>next_turn))
             {
-                graph_dis[m*line+n]=graph_dis[u]+c;
-                graph_pre[m*line+n]=u;
-                que.push(node(m*line+n,graph_dis[m*line+n]));
+                graph_dis[next_name]=graph_dis[u]+c;
+                graph_pre[next_name]=u;
+                graph_turn[next_name] = next_turn;
+                node next_node;
+                next_node.name = next_x*line+next_y;
+            	next_node.tmpdis = graph_dis[next_name];
+				next_node.turn = next_turn;
+                que.push(next_node);
             }
         }
     }
@@ -757,7 +780,7 @@ int main()
             now[i][0]=startpoint[i];
             printf("car[%d]\n",i);
             find_shortest(i);
-            debug_graph(i);
+            //debug_graph(i);
             if(step_total[i]==-1)
                 return 0;
         }
