@@ -738,6 +738,7 @@ void init()
     memset(mark_release,false,sizeof(mark_release));
     memset(step_now,0,sizeof(step_now));
     flag_deadlock=false;
+    crossnum=0;
 }
 void crossing_token(int t)  //new
 {
@@ -834,6 +835,7 @@ int main()
         graph_input();
         graph_build();
         memset(finish_time,0,sizeof(finish_time));
+        memset(waiting_time,0,sizeof(waiting_time));
         scanf("%d",&num);
         for(int i=0;i<num;i++)
             scanf("%d%d%d%d",&import[i].a,&import[i].b,&import[i].c,&import[i].d);
